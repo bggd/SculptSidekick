@@ -22,7 +22,7 @@ bl_info = {
     "category": "3D View",
 }
 
-
+import os
 import bpy
 
 
@@ -256,27 +256,169 @@ class SculptSidekickRemeshPanel(bpy.types.Panel):
         sym.prop(sculpt, "symmetrize_direction", text="")
 
 
+class SculptSidekickPieBrushMenu(bpy.types.Menu):
+    bl_idname = "PIE_MT_SculptSidkickPieBrush"
+    bl_label = "Pie SculptSidekick"
+
+    def draw(self, context):
+        global brush_icons
+        layout = self.layout
+
+        pie = layout.menu_pie()
+        pie.scale_y = 1.5
+
+        col = pie.column(align=True)
+        col.operator(
+            "sculpt.sculptraw", text="    Draw", icon_value=brush_icons["draw"]
+        )
+        col.operator(
+            "paint.brush_select", text="    Clay", icon_value=brush_icons["clay"]
+        ).sculpt_tool = "CLAY"
+        col.operator(
+            "paint.brush_select",
+            text="    Clay Strips",
+            icon_value=brush_icons["clay_strips"],
+        ).sculpt_tool = "CLAY_STRIPS"
+        col.operator(
+            "paint.brush_select", text="    Crease", icon_value=brush_icons["crease"]
+        ).sculpt_tool = "CREASE"
+        col.operator(
+            "paint.brush_select", text="    Blob", icon_value=brush_icons["blob"]
+        ).sculpt_tool = "BLOB"
+
+        col.operator(
+            "paint.brush_select",
+            text="    Inflate/Deflate",
+            icon_value=brush_icons["inflate"],
+        ).sculpt_tool = "INFLATE"
+
+        col = pie.column(align=True)
+        col.operator(
+            "paint.brush_select", text="    Grab", icon_value=brush_icons["grab"]
+        ).sculpt_tool = "GRAB"
+        col.operator(
+            "paint.brush_select", text="    Nudge", icon_value=brush_icons["nudge"]
+        ).sculpt_tool = "NUDGE"
+        col.operator(
+            "paint.brush_select", text="    Thumb", icon_value=brush_icons["thumb"]
+        ).sculpt_tool = "THUMB"
+        col.operator(
+            "paint.brush_select",
+            text="    Snakehook",
+            icon_value=brush_icons["snake_hook"],
+        ).sculpt_tool = "SNAKE_HOOK"
+        col.operator(
+            "paint.brush_select", text="    Rotate", icon_value=brush_icons["rotate"]
+        ).sculpt_tool = "ROTATE"
+
+        col = pie.column(align=True)
+        col.operator(
+            "paint.brush_select", text="    Smooth", icon_value=brush_icons["smooth"]
+        ).sculpt_tool = "SMOOTH"
+        col.operator(
+            "paint.brush_select", text="    Flatten", icon_value=brush_icons["flatten"]
+        ).sculpt_tool = "FLATTEN"
+        col.operator(
+            "paint.brush_select",
+            text="    Scrape/Peaks",
+            icon_value=brush_icons["scrape"],
+        ).sculpt_tool = "SCRAPE"
+        col.operator(
+            "paint.brush_select", text="    Fill/Deepen", icon_value=brush_icons["fill"]
+        ).sculpt_tool = "FILL"
+        col.operator(
+            "paint.brush_select",
+            text="    Pinch/Magnify",
+            icon_value=brush_icons["pinch"],
+        ).sculpt_tool = "PINCH"
+        col.operator(
+            "paint.brush_select", text="    Layer", icon_value=brush_icons["layer"]
+        ).sculpt_tool = "LAYER"
+        col.operator(
+            "paint.brush_select", text="    Mask", icon_value=brush_icons["mask"]
+        ).sculpt_tool = "MASK"
+
+
 classList = (
     SculptSidekickProperty,
     SculptSidekickFlipToolbarOp,
     SculptSidekickFlipSidebarOp,
     SculptSidekickPanel,
     SculptSidekickRemeshPanel,
+    SculptSidekickPieBrushMenu,
 )
+
+brush_icons = {}
+
+
+def create_icons():
+    global brush_icons
+    icons_directory = bpy.utils.system_resource("DATAFILES", path="icons")
+    brushes = (
+        "crease",
+        "blob",
+        "smooth",
+        "draw",
+        "clay",
+        "clay_strips",
+        "inflate",
+        "grab",
+        "nudge",
+        "thumb",
+        "snake_hook",
+        "rotate",
+        "flatten",
+        "scrape",
+        "fill",
+        "pinch",
+        "layer",
+        "mask",
+    )
+    for brush in brushes:
+        filename = os.path.join(icons_directory, f"brush.sculpt.{brush}.dat")
+        icon_value = bpy.app.icons.new_triangles_from_file(filename)
+        brush_icons[brush] = icon_value
+
+
+def release_icons():
+    global brush_icons
+    for value in brush_icons.values():
+        bpy.app.icons.release(value)
+
+
+addon_keymaps = []
 
 
 def register():
+    create_icons()
+
     for cls in classList:
         bpy.utils.register_class(cls)
     bpy.types.Scene.sidekick_properties = bpy.props.PointerProperty(
         type=SculptSidekickProperty
     )
 
+    wm = bpy.context.window_manager
+    if wm.keyconfigs.addon:
+        km = wm.keyconfigs.addon.keymaps.new(name="Sculpt")
+        kmi = km.keymap_items.new("wm.call_menu_pie", "W", "PRESS")
+        kmi.properties.name = "PIE_MT_SculptSidkickPieBrush"
+        addon_keymaps.append((km, kmi))
+
 
 def unregister():
+    release_icons()
+
     for cls in reversed(classList):
         bpy.utils.unregister_class(cls)
     del bpy.types.Scene.sidekick_properties
+
+    wm = bpy.context.window_manager
+    kc = wm.keyconfigs.addon
+    if kc:
+        for km, kmi in addon_keymaps:
+            km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
 
 
 if __name__ == "__main__":
