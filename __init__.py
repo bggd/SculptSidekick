@@ -123,15 +123,6 @@ class SculptSidekickPanel(bpy.types.Panel):
             context.space_data.overlay, "wireframe_opacity", text="Wireframe Opacity"
         )
 
-        mask = layout.row()
-        mask_heading = mask.row()
-        mask_heading.alignment = "RIGHT"
-        mask_heading.label(text="Mask")
-        mask.operator("paint.mask_flood_fill", text="Invert").mode = "INVERT"
-        op = mask.operator("paint.mask_flood_fill", text="Clear")
-        op.mode = "VALUE"
-        op.value = 0
-
         if not context.space_data.overlay.show_overlays:
             wire.active = False
             wire_opacity.active = False
