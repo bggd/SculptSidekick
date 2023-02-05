@@ -16,7 +16,7 @@ bl_info = {
     "author": "birthggd",
     "description": "Sculpt Sidekick",
     "blender": (2, 80, 0),
-    "version": (0, 0, 6),
+    "version": (0, 0, 7),
     "location": "",
     "warning": "",
     "category": "3D View",
@@ -309,6 +309,18 @@ class SculptSidekickPieBrushMenu(
 ):
     bl_idname = "PIE_MT_SculptSidkickPieBrush"
     bl_label = "Pie SculptSidekick"
+
+    @classmethod
+    def poll(cls, context):
+        if context.mode != "SCULPT":
+            return False
+        obj = context.active_object
+        if not obj:
+            return False
+        if obj.type != "MESH":
+            return False
+
+        return True
 
     def draw(self, context):
         global brush_icons
