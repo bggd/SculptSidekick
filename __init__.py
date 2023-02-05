@@ -24,6 +24,7 @@ bl_info = {
 
 import os
 import bpy
+import bl_ui
 
 
 remesh_mode_items = [("VOXEL", "Voxel", ""), ("QUAD", "Quad", "")]
@@ -303,7 +304,9 @@ builtin_brushes = [
 ]
 
 
-class SculptSidekickPieBrushMenu(bpy.types.Menu):
+class SculptSidekickPieBrushMenu(
+    bpy.types.Menu, bl_ui.space_view3d.VIEW3D_PT_sculpt_context_menu
+):
     bl_idname = "PIE_MT_SculptSidkickPieBrush"
     bl_label = "Pie SculptSidekick"
 
@@ -330,6 +333,17 @@ class SculptSidekickPieBrushMenu(bpy.types.Menu):
             col.operator(
                 "wm.tool_set_by_id", text="", icon_value=icon, depress=is_active
             ).name = name
+
+        class FakeSelf:
+            def __init__(self, layout):
+                self.layout = layout
+
+        box = pie.box()
+        box.scale_y = 0.7
+        box.scale_x = 0.7
+        col = box.column()
+        obj = FakeSelf(col)
+        bl_ui.space_view3d.VIEW3D_PT_sculpt_context_menu.draw(obj, context)
 
 
 classList = (
