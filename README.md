@@ -3,7 +3,7 @@
 
 W -> Pie Menu
 
-![sculpt-sidekick-pie](https://user-images.githubusercontent.com/5888426/216575865-69525504-9ce4-4ba0-888c-ecbfbbdbaf29.png)
+![sculpt-sidekick-pie-v005](https://user-images.githubusercontent.com/5888426/216808287-ffd75986-2258-48fd-bbdf-d7dd1949725d.png)
 
 Sidebar
 
