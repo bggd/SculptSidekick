@@ -267,87 +267,69 @@ class SculptSidekickRemeshPanel(bpy.types.Panel):
         sym.prop(sculpt, "symmetrize_direction", text="")
 
 
+builtin_brushes = [
+    ("DRAW", "Draw", "draw"),
+    ("DRAW_SHARP", "Draw Sharp", "draw_sharp"),
+    ("CLAY", "Clay", "clay"),
+    ("CLAY_STRIPS", "Clay Strips", "clay_strips"),
+    ("CLAY_THUMB", "Clay Thumb", "clay_thumb"),
+    ("LAYER", "Layer", "layer"),
+    ("INFLATE", "Inflate", "inflate"),
+    ("BLOB", "Blob", "blob"),
+    ("CREASE", "Crease", "crease"),
+    ("SMOOTH", "Smooth", "smooth"),
+    ("FLATTEN", "Flatten", "flatten"),
+    ("FILL", "Fill", "fill"),
+    ("SCRAPE", "Scrape", "scrape"),
+    ("MULTIPLANE_SCRAPE", "Multi-plane Scrape", "multiplane_scrape"),
+    ("PINCH", "Pinch", "pinch"),
+    ("GRAB", "Grab", "grab"),
+    ("ELASTIC_DEFORM", "Elastic Deform", "elastic_deform"),
+    ("SNAKE_HOOK", "Snake Hook", "snake_hook"),
+    ("THUMB", "Thumb", "thumb"),
+    ("POSE", "Pose", "pose"),
+    ("NUDGE", "Nudge", "nudge"),
+    ("ROTATE", "Rotate", "rotate"),
+    ("TOPOLOGY", "Slide Relax", "topology"),
+    ("BOUNDARY", "Boundary", "boundary"),
+    ("CLOTH", "Cloth", "cloth"),
+    ("SIMPLIFY", "Simplify", "simplify"),
+    ("MASK", "Mask", "mask"),
+    ("DRAW_FACE_SETS", "Draw Face Sets", "draw_face_sets"),
+    ("DISPLACEMENT_ERASER", "Multires Displacement Eraser", "displacement_eraser"),
+    ("DISPLACEMENT_SMEAR", "Multires Displacement Smear", "displacement_smear"),
+    ("PAINT", "Paint", "paint"),
+    ("SMEAR", "Smear", "smear"),
+]
+
+
 class SculptSidekickPieBrushMenu(bpy.types.Menu):
     bl_idname = "PIE_MT_SculptSidkickPieBrush"
     bl_label = "Pie SculptSidekick"
 
     def draw(self, context):
         global brush_icons
+
+        sculpt_tool = context.tool_settings.sculpt.brush.sculpt_tool
+
         layout = self.layout
 
         pie = layout.menu_pie()
         pie.scale_y = 1.5
+        pie.scale_x = 1.5
 
-        col = pie.column(align=True)
-        col.operator(
-            "sculpt.sculptraw", text="    Draw", icon_value=brush_icons["draw"]
-        )
-        col.operator(
-            "paint.brush_select", text="    Clay", icon_value=brush_icons["clay"]
-        ).sculpt_tool = "CLAY"
-        col.operator(
-            "paint.brush_select",
-            text="    Clay Strips",
-            icon_value=brush_icons["clay_strips"],
-        ).sculpt_tool = "CLAY_STRIPS"
-        col.operator(
-            "paint.brush_select", text="    Crease", icon_value=brush_icons["crease"]
-        ).sculpt_tool = "CREASE"
-        col.operator(
-            "paint.brush_select", text="    Blob", icon_value=brush_icons["blob"]
-        ).sculpt_tool = "BLOB"
+        col = pie.grid_flow(row_major=True, columns=2, align=True)
 
-        col.operator(
-            "paint.brush_select",
-            text="    Inflate/Deflate",
-            icon_value=brush_icons["inflate"],
-        ).sculpt_tool = "INFLATE"
-
-        col = pie.column(align=True)
-        col.operator(
-            "paint.brush_select", text="    Grab", icon_value=brush_icons["grab"]
-        ).sculpt_tool = "GRAB"
-        col.operator(
-            "paint.brush_select", text="    Nudge", icon_value=brush_icons["nudge"]
-        ).sculpt_tool = "NUDGE"
-        col.operator(
-            "paint.brush_select", text="    Thumb", icon_value=brush_icons["thumb"]
-        ).sculpt_tool = "THUMB"
-        col.operator(
-            "paint.brush_select",
-            text="    Snakehook",
-            icon_value=brush_icons["snake_hook"],
-        ).sculpt_tool = "SNAKE_HOOK"
-        col.operator(
-            "paint.brush_select", text="    Rotate", icon_value=brush_icons["rotate"]
-        ).sculpt_tool = "ROTATE"
-
-        col = pie.column(align=True)
-        col.operator(
-            "paint.brush_select", text="    Smooth", icon_value=brush_icons["smooth"]
-        ).sculpt_tool = "SMOOTH"
-        col.operator(
-            "paint.brush_select", text="    Flatten", icon_value=brush_icons["flatten"]
-        ).sculpt_tool = "FLATTEN"
-        col.operator(
-            "paint.brush_select",
-            text="    Scrape/Peaks",
-            icon_value=brush_icons["scrape"],
-        ).sculpt_tool = "SCRAPE"
-        col.operator(
-            "paint.brush_select", text="    Fill/Deepen", icon_value=brush_icons["fill"]
-        ).sculpt_tool = "FILL"
-        col.operator(
-            "paint.brush_select",
-            text="    Pinch/Magnify",
-            icon_value=brush_icons["pinch"],
-        ).sculpt_tool = "PINCH"
-        col.operator(
-            "paint.brush_select", text="    Layer", icon_value=brush_icons["layer"]
-        ).sculpt_tool = "LAYER"
-        col.operator(
-            "paint.brush_select", text="    Mask", icon_value=brush_icons["mask"]
-        ).sculpt_tool = "MASK"
+        for i in builtin_brushes:
+            is_active = False
+            tool = i[0]
+            name = f"builtin_brush.{i[1]}"
+            icon = brush_icons[i[2]]
+            if tool == sculpt_tool:
+                is_active = True
+            col.operator(
+                "wm.tool_set_by_id", text="", icon_value=icon, depress=is_active
+            ).name = name
 
 
 classList = (
@@ -385,6 +367,20 @@ def create_icons():
         "pinch",
         "layer",
         "mask",
+        "draw_sharp",
+        "clay_thumb",
+        "elastic_deform",
+        "pose",
+        "boundary",
+        "multiplane_scrape",
+        "cloth",
+        "simplify",
+        "draw_face_sets",
+        "displacement_eraser",
+        "displacement_smear",
+        "paint",
+        "smear",
+        "topology",
     )
     for brush in brushes:
         filename = os.path.join(icons_directory, f"brush.sculpt.{brush}.dat")
