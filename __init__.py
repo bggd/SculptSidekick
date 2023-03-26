@@ -69,7 +69,7 @@ class SculptSidekickFlipSidebarOp(bpy.types.Operator):
 
 class SculptSidekickPanel(bpy.types.Panel):
     bl_idname = "UI_PT_SculptSidkick"
-    bl_label = "Sculpt Sidekick"
+    bl_label = "Sculpt Sidekick Viewport"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Sculpt Sidekick"
