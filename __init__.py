@@ -12,7 +12,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 bl_info = {
-    "name": "SculptSidekick",
+    "name": "Sculpt Sidekick",
     "author": "birthggd",
     "description": "Sculpt Sidekick",
     "blender": (2, 80, 0),
@@ -373,7 +373,6 @@ class SculptSidekickPieBrushMenu(
             "idname",
             None,
         )
-        print(tool_active_id)
 
         col = pie.grid_flow(row_major=True, columns=2, align=True)
 
