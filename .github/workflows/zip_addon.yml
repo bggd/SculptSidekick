@@ -4,10 +4,18 @@ on:
   push:
     branches:
       - main
+    tags:
+      - 'v*'
 
 jobs:
   zip_b3d_addon:
     name: Zip Blender Addon
     runs-on: ubuntu-latest
     steps:
-      - run: echo "hello workflow!"
+      - uses: actions/checkout@v3
+      - run: mkdir SculptSidekick
+      - run: mv *.py LICENSE README.md SculptSidekick
+      - run: zip SculptSidekick-${{  github.ref_name  }} SculptSidekick
+      - uses: softprops/action-gh-release@v1
+        with:
+          files: SculptSidekick-${{  github.ref_name  }}.zip
