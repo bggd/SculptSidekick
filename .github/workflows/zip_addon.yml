@@ -1,0 +1,13 @@
+name: Zip Addon
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  zip_b3d_addon:
+    name: Zip Blender Addon
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "hello workflow!"
