@@ -16,7 +16,7 @@ bl_info = {
     "author": "birthggd",
     "description": "Sculpt Sidekick",
     "blender": (2, 80, 0),
-    "version": (0, 0, 9),
+    "version": (1, 0, 0),
     "location": "",
     "warning": "",
     "category": "3D View",
