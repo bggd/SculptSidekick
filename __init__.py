@@ -43,7 +43,8 @@ from .panel import (
     SculptSidekickDyntopoPanel,
     SculptSidekickRemeshPanel,
 )
-from .pie_menu import SculptSidekickPieBrushMenu
+from . import pie_menu
+from .preferences import SculptSidekickPreferences
 
 classList = (
     SculptSidekickProperty,
@@ -52,11 +53,9 @@ classList = (
     SculptSidekickPanel,
     SculptSidekickDyntopoPanel,
     SculptSidekickRemeshPanel,
-    SculptSidekickPieBrushMenu,
+    SculptSidekickPreferences,
+    pie_menu.SculptSidekickPieBrushMenu,
 )
-
-
-addon_keymaps = []
 
 
 def register():
@@ -69,12 +68,7 @@ def register():
         type=SculptSidekickProperty
     )
 
-    wm = bpy.context.window_manager
-    if wm.keyconfigs.addon:
-        km = wm.keyconfigs.addon.keymaps.new(name="Sculpt")
-        kmi = km.keymap_items.new("wm.call_menu_pie", "W", "PRESS")
-        kmi.properties.name = "PIE_MT_SculptSidkickPieBrush"
-        addon_keymaps.append((km, kmi))
+    pie_menu.register()
 
 
 def unregister():
@@ -84,12 +78,7 @@ def unregister():
         bpy.utils.unregister_class(cls)
     del bpy.types.Scene.sidekick_properties
 
-    wm = bpy.context.window_manager
-    kc = wm.keyconfigs.addon
-    if kc:
-        for km, kmi in addon_keymaps:
-            km.keymap_items.remove(kmi)
-    addon_keymaps.clear()
+    pie_menu.unregister()
 
 
 if __name__ == "__main__":

@@ -96,3 +96,35 @@ class SculptSidekickPieBrushMenu(
                 icon_value=icon,
                 depress=idname == tool_active_id,
             ).name = idname
+
+
+addon_keymaps = []
+
+
+def enable_pie_menu():
+    wm = bpy.context.window_manager
+    if wm.keyconfigs.addon:
+        km = wm.keyconfigs.addon.keymaps.new(name="Sculpt")
+        kmi = km.keymap_items.new("wm.call_menu_pie", "W", "PRESS")
+        kmi.properties.name = "PIE_MT_SculptSidkickPieBrush"
+        addon_keymaps.append((km, kmi))
+
+
+def disable_pie_menu():
+    wm = bpy.context.window_manager
+    kc = wm.keyconfigs.addon
+    if kc:
+        for km, kmi in addon_keymaps:
+            km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
+
+
+def register():
+    addon = bpy.context.preferences.addons[__package__]
+    prefs = addon.preferences
+    if prefs.use_piemenu:
+        enable_pie_menu()
+
+
+def unregister():
+    disable_pie_menu()
