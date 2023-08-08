@@ -1,13 +1,10 @@
 import bpy
 
 
-class SculptSidekickPanel(bpy.types.Panel):
-    bl_idname = "UI_PT_SculptSidkick"
-    bl_label = "Sculpt Sidekick Viewport"
+class SculptSidekickBase:
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Sculpt Sidekick"
-    # bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -20,6 +17,12 @@ class SculptSidekickPanel(bpy.types.Panel):
             return False
 
         return True
+
+
+class SculptSidekickPanel(SculptSidekickBase, bpy.types.Panel):
+    bl_idname = "UI_PT_SculptSidkick"
+    bl_label = "Sculpt Sidekick Viewport"
+    # bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         sidekick = context.scene.sidekick_properties
@@ -65,24 +68,9 @@ class SculptSidekickPanel(bpy.types.Panel):
             wire_opacity.active = False
 
 
-class SculptSidekickDyntopoPanel(bpy.types.Panel):
+class SculptSidekickDyntopoPanel(SculptSidekickBase, bpy.types.Panel):
     bl_idname = "UI_PT_SculptSidkickDyntopo"
     bl_label = ""
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Sculpt Sidekick"
-
-    @classmethod
-    def poll(cls, context):
-        if context.mode != "SCULPT":
-            return False
-        obj = context.active_object
-        if not obj:
-            return False
-        if obj.type != "MESH":
-            return False
-
-        return True
 
     def draw_header(self, context):
         layout = self.layout
@@ -143,25 +131,10 @@ class SculptSidekickDyntopoPanel(bpy.types.Panel):
             brush.active = False
 
 
-class SculptSidekickRemeshPanel(bpy.types.Panel):
+class SculptSidekickRemeshPanel(SculptSidekickBase, bpy.types.Panel):
     bl_idname = "UI_PT_SculptSidkickRemesh"
     bl_label = "Sculpt Sidekick Remesh"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Sculpt Sidekick"
     bl_options = {"DEFAULT_CLOSED"}
-
-    @classmethod
-    def poll(cls, context):
-        if context.mode != "SCULPT":
-            return False
-        obj = context.active_object
-        if not obj:
-            return False
-        if obj.type != "MESH":
-            return False
-
-        return True
 
     def draw(self, context):
         sidekick = context.scene.sidekick_properties
