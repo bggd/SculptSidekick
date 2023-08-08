@@ -40,6 +40,7 @@ from . import icons
 from .operators import SculptSidekickFlipToolbarOp, SculptSidekickFlipSidebarOp
 from .panel import (
     SculptSidekickPanel,
+    SculptSidekickPanelViewport,
     SculptSidekickDyntopoPanel,
     SculptSidekickRemeshPanel,
 )
@@ -51,6 +52,7 @@ classList = (
     SculptSidekickFlipToolbarOp,
     SculptSidekickFlipSidebarOp,
     SculptSidekickPanel,
+    SculptSidekickPanelViewport,
     SculptSidekickDyntopoPanel,
     SculptSidekickRemeshPanel,
     SculptSidekickPreferences,

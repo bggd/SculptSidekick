@@ -21,7 +21,16 @@ class SculptSidekickBase:
 
 class SculptSidekickPanel(SculptSidekickBase, bpy.types.Panel):
     bl_idname = "UI_PT_SculptSidkick"
-    bl_label = "Sculpt Sidekick Viewport"
+    bl_label = "Sculpt Sidekick"
+
+    def draw(self, context):
+        pass
+
+
+class SculptSidekickPanelViewport(SculptSidekickBase, bpy.types.Panel):
+    bl_idname = "UI_PT_SculptSidkickViewport"
+    bl_label = "Viewport"
+    bl_parent_id = "UI_PT_SculptSidkick"
     # bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
@@ -71,6 +80,7 @@ class SculptSidekickPanel(SculptSidekickBase, bpy.types.Panel):
 class SculptSidekickDyntopoPanel(SculptSidekickBase, bpy.types.Panel):
     bl_idname = "UI_PT_SculptSidkickDyntopo"
     bl_label = ""
+    bl_parent_id = "UI_PT_SculptSidkick"
 
     def draw_header(self, context):
         layout = self.layout
@@ -81,7 +91,7 @@ class SculptSidekickDyntopoPanel(SculptSidekickBase, bpy.types.Panel):
 
         layout.operator(
             "sculpt.dynamic_topology_toggle",
-            text="Sculpt Sidekick Dyntopo",
+            text="Dyntopo",
             icon="CHECKBOX_HLT" if is_active else "CHECKBOX_DEHLT",
             emboss=True,
         )
@@ -133,7 +143,8 @@ class SculptSidekickDyntopoPanel(SculptSidekickBase, bpy.types.Panel):
 
 class SculptSidekickRemeshPanel(SculptSidekickBase, bpy.types.Panel):
     bl_idname = "UI_PT_SculptSidkickRemesh"
-    bl_label = "Sculpt Sidekick Remesh"
+    bl_label = "Remesh"
+    bl_parent_id = "UI_PT_SculptSidkick"
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
