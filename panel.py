@@ -79,6 +79,7 @@ class SculptSidekickPanelViewport(SculptSidekickBase, bpy.types.Panel):
 
 from bl_operators.presets import AddPresetBase
 from bl_ui.utils import PresetPanel
+import bl_ui
 
 
 class SCULPTSIDEKICK_MT_DyntopoPresets(bpy.types.Menu):
@@ -140,11 +141,23 @@ class SculptSidekickDyntopoPanel(SculptSidekickBase, bpy.types.Panel):
 
         sculpt = context.scene.tool_settings.sculpt
 
-        layout = self.layout
-
         is_active = True
+        paint_settings = bl_ui.properties_paint_common.UnifiedPaintPanel.paint_settings(
+            context
+        )
+        if context.sculpt_object and sculpt and paint_settings:
+            brush = paint_settings.brush
+            if brush and brush.sculpt_tool != "MASK":
+                is_active = True
+            else:
+                is_active = False
+        else:
+            is_active = False
+
         if not context.sculpt_object.use_dynamic_topology_sculpting:
             is_active = False
+
+        layout = self.layout
 
         method = layout.column()
         method.active = is_active
