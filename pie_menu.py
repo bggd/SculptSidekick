@@ -2,6 +2,10 @@ import bpy
 import bl_ui
 
 from .icons import builtin_brushes, builtin_others, brush_icons
+from .panel import (
+    SCULPTSIDEKICK_MT_DyntopoPresets,
+    SCULPTSIDEKICK_MT_DyntopoPresets,
+)
 
 
 class SculptSidekickPieBrushMenu(
@@ -31,8 +35,6 @@ class SculptSidekickPieBrushMenu(
         layout = self.layout
 
         pie = layout.menu_pie()
-        pie.scale_y = 1.75
-        pie.scale_x = 1.5
 
         space_type = context.space_data.type
         tool_active_id = getattr(
@@ -44,6 +46,8 @@ class SculptSidekickPieBrushMenu(
         )
 
         col = pie.grid_flow(row_major=True, columns=2, align=True)
+        col.scale_y = 1.75
+        col.scale_x = 1.35
 
         for i in builtin_brushes:
             tool = i[0]
@@ -61,9 +65,7 @@ class SculptSidekickPieBrushMenu(
             def __init__(self, layout):
                 self.layout = layout
 
-        col = pie.column()
-        col.scale_y = 0.65
-        col.scale_x = 0.7
+        col = pie.column().box()
         bl_ui.space_toolsystem_common.ToolSelectPanelHelper.draw_active_tool_header(
             context,
             col,
@@ -84,6 +86,9 @@ class SculptSidekickPieBrushMenu(
         bl_ui.space_view3d.VIEW3D_PT_sculpt_context_menu.draw(obj, context)
 
         col = pie.grid_flow(row_major=True, columns=2, align=True)
+        col.scale_y = 1.75
+        col.scale_x = 1.35
+
         for i in builtin_others:
             if i == None:
                 col.separator()
@@ -96,6 +101,15 @@ class SculptSidekickPieBrushMenu(
                 icon_value=icon,
                 depress=idname == tool_active_id,
             ).name = idname
+
+        col = pie.box().column(align=False)
+        col.scale_x = 1.2
+        col.popover("VIEW3D_PT_sculpt_dyntopo")
+        col.menu(
+            SCULPTSIDEKICK_MT_DyntopoPresets.__name__,
+            text=SCULPTSIDEKICK_MT_DyntopoPresets.bl_label,
+            icon="PRESET",
+        )
 
 
 addon_keymaps = []
