@@ -77,6 +77,42 @@ class SculptSidekickPanelViewport(SculptSidekickBase, bpy.types.Panel):
             wire_opacity.active = False
 
 
+from bl_operators.presets import AddPresetBase
+from bl_ui.utils import PresetPanel
+
+
+class SCULPTSIDEKICK_MT_DyntopoPresets(bpy.types.Menu):
+    bl_label = "New Presets"
+    preset_subdir = "SculptSidekick/dyntopo_presets"
+    preset_operator = "script.execute_preset"
+    draw = bpy.types.Menu.draw_preset
+
+
+class SCULPTSIDEKICK_OT_AddDyntopoPresets(AddPresetBase, bpy.types.Operator):
+    bl_idname = "sculpt_sidekick.dyntopo_preset_add"
+    bl_label = "Add Dyntopo Presets"
+    preset_menu = "SCULPTSIDEKICK_MT_DyntopoPresets"
+
+    preset_defines = ["sculpt = bpy.context.scene.tool_settings.sculpt"]
+
+    preset_values = [
+        "sculpt.detail_type_method",
+        "sculpt.constant_detail_resolution",
+        "sculpt.detail_size",
+        "sculpt.detail_percent",
+        "sculpt.detail_refine_method",
+    ]
+
+    preset_subdir = "SculptSidekick/dyntopo_presets"
+
+
+class SCULPTSIDEKICK_PT_Presets(PresetPanel, bpy.types.Panel):
+    bl_label = "Dynto Presets"
+    preset_subdir = "SculptSidekick/dyntopo_presets"
+    preset_operator = "script.execute_preset"
+    preset_add_operator = "sculpt_sidekick.dyntopo_preset_add"
+
+
 class SculptSidekickDyntopoPanel(SculptSidekickBase, bpy.types.Panel):
     bl_idname = "UI_PT_SculptSidkickDyntopo"
     bl_label = ""
@@ -95,6 +131,9 @@ class SculptSidekickDyntopoPanel(SculptSidekickBase, bpy.types.Panel):
             icon="CHECKBOX_HLT" if is_active else "CHECKBOX_DEHLT",
             emboss=True,
         )
+
+    def draw_header_preset(self, context):
+        SCULPTSIDEKICK_PT_Presets.draw_panel_header(self.layout)
 
     def draw(self, context):
         sidekick = context.scene.sidekick_properties
@@ -189,16 +228,37 @@ class SculptSidekickRemeshPanel(SculptSidekickBase, bpy.types.Panel):
 classes = (
     SculptSidekickPanel,
     SculptSidekickPanelViewport,
+    SCULPTSIDEKICK_MT_DyntopoPresets,
+    SCULPTSIDEKICK_OT_AddDyntopoPresets,
+    SCULPTSIDEKICK_PT_Presets,
     SculptSidekickDyntopoPanel,
     SculptSidekickRemeshPanel,
 )
+
+
+def preset_menu(self, context):
+    layout = self.layout
+
+    row = layout.row(align=True)
+    row.menu(
+        SCULPTSIDEKICK_MT_DyntopoPresets.__name__,
+        text=SCULPTSIDEKICK_MT_DyntopoPresets.bl_label,
+    )
+    row.operator(SCULPTSIDEKICK_OT_AddDyntopoPresets.bl_idname, text="", icon="ADD")
+    row.operator(
+        SCULPTSIDEKICK_OT_AddDyntopoPresets.bl_idname, text="", icon="REMOVE"
+    ).remove_active = True
 
 
 def register_classes():
     for cls in classes:
         bpy.utils.register_class(cls)
 
+    bpy.types.VIEW3D_PT_sculpt_dyntopo.prepend(preset_menu)
+
 
 def unregister_classes():
     for cls in classes:
         bpy.utils.unregister_class(cls)
+
+    bpy.types.VIEW3D_PT_sculpt_dyntopo.remove(preset_menu)
