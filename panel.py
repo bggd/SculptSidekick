@@ -254,11 +254,13 @@ def register_classes():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.VIEW3D_PT_sculpt_dyntopo.prepend(preset_menu)
+    # bpy.types.VIEW3D_PT_sculpt_dyntopo.prepend(preset_menu)
+    SculptSidekickDyntopoPanel.prepend(preset_menu)
 
 
 def unregister_classes():
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
-    bpy.types.VIEW3D_PT_sculpt_dyntopo.remove(preset_menu)
+    # bpy.types.VIEW3D_PT_sculpt_dyntopo.remove(preset_menu)
+    SculptSidekickDyntopoPanel.remove(preset_menu)
