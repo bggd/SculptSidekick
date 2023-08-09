@@ -37,24 +37,17 @@ class SculptSidekickProperty(bpy.types.PropertyGroup):
 
 
 from . import icons
-from .operators import SculptSidekickFlipToolbarOp, SculptSidekickFlipSidebarOp
-from .panel import (
-    SculptSidekickPanel,
-    SculptSidekickPanelViewport,
-    SculptSidekickDyntopoPanel,
-    SculptSidekickRemeshPanel,
-)
+from . import operators
+from . import panel
 from . import pie_menu
 from .preferences import SculptSidekickPreferences
 
+from . import _refresh_
+
+_refresh_.reload_modules()
+
 classList = (
     SculptSidekickProperty,
-    SculptSidekickFlipToolbarOp,
-    SculptSidekickFlipSidebarOp,
-    SculptSidekickPanel,
-    SculptSidekickPanelViewport,
-    SculptSidekickDyntopoPanel,
-    SculptSidekickRemeshPanel,
     SculptSidekickPreferences,
     pie_menu.SculptSidekickPieBrushMenu,
 )
@@ -70,6 +63,8 @@ def register():
         type=SculptSidekickProperty
     )
 
+    operators.register_classes()
+    panel.register_classes()
     pie_menu.register()
 
 
@@ -80,6 +75,8 @@ def unregister():
         bpy.utils.unregister_class(cls)
     del bpy.types.Scene.sidekick_properties
 
+    operators.unregister_classes()
+    panel.unregister_classes()
     pie_menu.unregister()
 
 

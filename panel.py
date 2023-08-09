@@ -184,3 +184,21 @@ class SculptSidekickRemeshPanel(SculptSidekickBase, bpy.types.Panel):
         sym = remesh.row()
         sym.operator("sculpt.symmetrize")
         sym.prop(sculpt, "symmetrize_direction", text="")
+
+
+classes = (
+    SculptSidekickPanel,
+    SculptSidekickPanelViewport,
+    SculptSidekickDyntopoPanel,
+    SculptSidekickRemeshPanel,
+)
+
+
+def register_classes():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+
+def unregister_classes():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)

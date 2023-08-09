@@ -29,3 +29,16 @@ class SculptSidekickFlipSidebarOp(bpy.types.Operator):
             with context.temp_override(region=sidebar):
                 return bpy.ops.screen.region_flip()
         return {"CANCELLED"}
+
+
+classes = (SculptSidekickFlipToolbarOp, SculptSidekickFlipSidebarOp)
+
+
+def register_classes():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+
+def unregister_classes():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
