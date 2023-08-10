@@ -141,56 +141,40 @@ class SculptSidekickDyntopoPanel(SculptSidekickBase, bpy.types.Panel):
 
         sculpt = context.scene.tool_settings.sculpt
 
-        is_active = True
         paint_settings = bl_ui.properties_paint_common.UnifiedPaintPanel.paint_settings(
             context
         )
+        brush = None
         if context.sculpt_object and sculpt and paint_settings:
             brush = paint_settings.brush
-            if brush and brush.sculpt_tool != "MASK":
-                is_active = True
-            else:
-                is_active = False
-        else:
-            is_active = False
-
-        if not context.sculpt_object.use_dynamic_topology_sculpting:
-            is_active = False
 
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        method = layout.column()
-        method.active = is_active
-        method.prop(sculpt, "detail_type_method", expand=True)
-        cnst = layout.split(align=True, factor=0.9)
-        cnst.prop(sculpt, "constant_detail_resolution")
-        op_snpl = cnst.operator("sculpt.sample_detail_size", text="", icon="EYEDROPPER")
-        op_snpl.mode = "DYNTOPO"
-        rel = layout.column()
-        rel.prop(sculpt, "detail_size")
-        brush = layout.column()
-        brush.prop(sculpt, "detail_percent")
-        refine = layout.column()
-        refine.active = is_active
-        refine.prop(sculpt, "detail_refine_method", expand=True)
-        fill = layout.column()
-        fill.operator("sculpt.detail_flood_fill")
-        if (
-            sculpt.detail_type_method == "CONSTANT"
-            or sculpt.detail_type_method == "MANUAL"
-        ):
-            rel.active = False
-            brush.active = False
-        elif sculpt.detail_type_method == "RELATIVE":
-            cnst.active = False
-            brush.active = False
+        col = layout.column()
+        col.active = context.sculpt_object.use_dynamic_topology_sculpting
+
+        sub = col.column()
+        sub.active = brush and brush.sculpt_tool != "MASK"
+        if sculpt.detail_type_method in {"CONSTANT", "MANUAL"}:
+            row = sub.row(align=True)
+            row.prop(sculpt, "constant_detail_resolution", text="Resolution")
+            props = row.operator(
+                "sculpt.sample_detail_size", text="", icon="EYEDROPPER"
+            )
+            props.mode = "DYNTOPO"
         elif sculpt.detail_type_method == "BRUSH":
-            cnst.active = False
-            rel.active = False
-        if not is_active:
-            rel.active = False
-            cnst.active = False
-            brush.active = False
+            sub.prop(sculpt, "detail_percent")
+        else:
+            sub.prop(sculpt, "detail_size")
+        sub.prop(sculpt, "detail_refine_method", text="Refine Method")
+        sub.prop(sculpt, "detail_type_method", text="Detailing")
+
+        if sculpt.detail_type_method in {"CONSTANT", "MANUAL"}:
+            col.operator("sculpt.detail_flood_fill")
+
+        col.prop(sculpt, "use_smooth_shading")
 
 
 class SculptSidekickRemeshPanel(SculptSidekickBase, bpy.types.Panel):
