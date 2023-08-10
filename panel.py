@@ -31,7 +31,7 @@ class SculptSidekickPanelViewport(SculptSidekickBase, bpy.types.Panel):
     bl_idname = "UI_PT_SculptSidkickViewport"
     bl_label = "Viewport"
     bl_parent_id = "UI_PT_SculptSidkick"
-    # bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
         sidekick = context.scene.sidekick_properties
@@ -118,6 +118,7 @@ class SculptSidekickDyntopoPanel(SculptSidekickBase, bpy.types.Panel):
     bl_idname = "UI_PT_SculptSidkickDyntopo"
     bl_label = ""
     bl_parent_id = "UI_PT_SculptSidkick"
+    bl_options = {"DEFAULT_CLOSED"}
 
     def draw_header(self, context):
         layout = self.layout
